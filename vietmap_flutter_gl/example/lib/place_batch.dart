@@ -82,8 +82,8 @@ class BatchAddBodyState extends State<BatchAddBody> {
     final listOptions = <PolylineOptions>[];
     for (final option in options) {
       for (final geom in option.geometry!) {
-        listOptions.add(
-            PolylineOptions(geometry: geom, polylineColor: Color(0xFF00FF00)));
+        listOptions.add(PolylineOptions(
+            geometry: geom, polylineColor: const Color(0xFF00FF00)));
       }
     }
     return listOptions;
@@ -95,8 +95,8 @@ class BatchAddBodyState extends State<BatchAddBody> {
     for (final option in options) {
       // put circles only on the outside
       for (final latLng in option.geometry!.first) {
-        circleOptions.add(
-            CircleOptions(geometry: latLng, circleColor: Color(0xFF00FF00)));
+        circleOptions.add(CircleOptions(
+            geometry: latLng, circleColor: const Color(0xFF00FF00)));
       }
     }
     return circleOptions;

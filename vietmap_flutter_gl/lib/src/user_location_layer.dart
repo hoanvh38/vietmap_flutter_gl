@@ -1,4 +1,4 @@
-part of vietmap_gl;
+part of '../vietmap_flutter_gl.dart';
 
 class UserLocationLayer extends StatefulWidget {
   /// The icon that will be used to represent the user's location on the map.
@@ -25,15 +25,14 @@ class UserLocationLayer extends StatefulWidget {
   /// use [UserLocationLayer] inside a [Stack], that contain [VietmapGL] and [UserLocationLayer] to work properly
   /// [VietmapGL.trackCameraPosition] must be set to true to work properly
   const UserLocationLayer(
-      {Key? key,
+      {super.key,
       this.locationIcon,
       this.bearingIcon,
       required this.mapController,
       this.ignorePointer,
       this.pulseOpacity = 0.3,
       this.iconSize = 50,
-      this.pulseColor = Colors.blue})
-      : super(key: key);
+      this.pulseColor = Colors.blue});
 
   @override
   State<UserLocationLayer> createState() => _UserLocationLayerState();
@@ -43,6 +42,7 @@ class _UserLocationLayerState extends State<UserLocationLayer> {
   VietmapController get _mapController => widget.mapController;
   MarkerState? _positionMarkerStates;
   UserLocation? _currentPosition;
+  // ignore: use_late_for_private_fields_and_variables
   Widget? _child;
   double _pulseSize = 0;
   LatLng? _location;
@@ -54,14 +54,25 @@ class _UserLocationLayerState extends State<UserLocationLayer> {
     _updatePulseSize();
 
     if (_currentPosition == null) return;
-    LatLng location = LatLng(_currentPosition?.position.latitude ?? 0,
+    final location = LatLng(_currentPosition?.position.latitude ?? 0,
         _currentPosition?.position.longitude ?? 0);
-    _mapController.toScreenLocationBatch([location]).then((value) {
-      if (mounted)
+    final currentTime = DateTime.now();
+    _mapController.toScreenLocation(location).then((value) {
+      print(currentTime.difference(DateTime.now()).inMilliseconds);
+      if (mounted) {
         setState(() {
-          this._location = location;
+          _location = location;
+          _initialPosition = value;
+        });
+      }
+    });
+    _mapController.toScreenLocationBatch([location]).then((value) {
+      if (mounted) {
+        setState(() {
+          _location = location;
           _initialPosition = value.first;
         });
+      }
     });
     super.didUpdateWidget(oldWidget);
   }
@@ -81,20 +92,22 @@ class _UserLocationLayerState extends State<UserLocationLayer> {
     onLocationMarkerListener = (cameraPosition) {
       _updateUserLocationPosition();
     };
-    // _mapController.getPlatform.onCameraIdlePlatform
-    //     .add(onLocationMarkerListener!);
+    _mapController.getPlatform.onCameraIdlePlatform
+        .add(onLocationMarkerListener!);
     _mapController.addListener(onMapListener!);
     _mapController.getPlatform.onUserLocationUpdatedPlatform.add((event) {
       _currentPosition = event;
       if (_currentPosition == null) return;
-      LatLng location = LatLng(_currentPosition?.position.latitude ?? 0,
+
+      final location = LatLng(_currentPosition?.position.latitude ?? 0,
           _currentPosition?.position.longitude ?? 0);
       _mapController.toScreenLocationBatch([location]).then((value) {
-        if (mounted)
+        if (mounted) {
           setState(() {
-            this._location = location;
+            _location = location;
             _initialPosition = value.first;
           });
+        }
       });
       _updatePulseSize();
       _updateUserLocationPosition();
@@ -103,7 +116,7 @@ class _UserLocationLayerState extends State<UserLocationLayer> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      LatLng? currentLatLng = await _mapController.requestMyLocationLatLng();
+      final currentLatLng = await _mapController.requestMyLocationLatLng();
       if (currentLatLng != null) {
         if (mounted) {
           setState(() {
@@ -121,14 +134,15 @@ class _UserLocationLayerState extends State<UserLocationLayer> {
       }
     });
     // if (currentPosition == null) return;
-    LatLng location =
-        widget.mapController.cameraPosition?.target ?? LatLng(0, 0);
+    final location =
+        widget.mapController.cameraPosition?.target ?? const LatLng(0, 0);
     _mapController.toScreenLocationBatch([location]).then((value) {
-      if (mounted)
+      if (mounted) {
         setState(() {
-          this._location = location;
+          _location = location;
           _initialPosition = value.first;
         });
+      }
     });
   }
 
@@ -143,8 +157,9 @@ class _UserLocationLayerState extends State<UserLocationLayer> {
   void _updateUserLocationPosition() {
     final coordinates = <LatLng>[];
 
-    if (_positionMarkerStates != null)
+    if (_positionMarkerStates != null) {
       coordinates.add(_positionMarkerStates!.getCoordinate());
+    }
 
     _mapController.toScreenLocationBatch(coordinates).then((points) {
       if (points.isEmpty || _positionMarkerStates == null) return;
@@ -174,17 +189,18 @@ class _UserLocationLayerState extends State<UserLocationLayer> {
   }
 
   _updatePulseSize() {
-    double width = _currentPosition?.horizontalAccuracy ?? 0;
-    double height = _currentPosition?.verticalAccuracy ?? 0;
+    var width = _currentPosition?.horizontalAccuracy ?? 0;
+    final height = _currentPosition?.verticalAccuracy ?? 0;
     // max of width and height
     width = max(width, height);
-    double zoomLevel = _mapController.cameraPosition?.zoom ?? 0;
+    final zoomLevel = _mapController.cameraPosition?.zoom ?? 0;
     // convert from meter to pixel with zoom level
 
-    if (mounted)
+    if (mounted) {
       setState(() {
         _pulseSize = width / 38543 * pow(2, zoomLevel);
       });
+    }
   }
 
   Widget _updateUserLocationWidget() {
@@ -203,7 +219,8 @@ class _UserLocationLayerState extends State<UserLocationLayer> {
                   size: Size(_pulseSize, _pulseSize),
                   painter: CirclePainter(
                     radius: _pulseSize / 2,
-                    color: widget.pulseColor.withOpacity(widget.pulseOpacity),
+                    color: widget.pulseColor
+                        .withAlpha((widget.pulseOpacity * 255).round()),
                   ),
                 ),
               ),
@@ -224,7 +241,7 @@ class _UserLocationLayerState extends State<UserLocationLayer> {
             decoration: BoxDecoration(
                 color: Colors.blue,
                 border: Border.all(color: Colors.white, width: 2),
-                borderRadius: BorderRadius.circular(10)),
+                borderRadius: BorderRadius.circular(100)),
           ),
           // draw a bearing angle icon with a triangle anchor is 60
           Container(
@@ -233,8 +250,8 @@ class _UserLocationLayerState extends State<UserLocationLayer> {
               decoration: BoxDecoration(
                   color: Colors.blue,
                   border: Border.all(color: Colors.white, width: 2),
-                  borderRadius: BorderRadius.circular(10)),
-              child: Icon(Icons.arrow_upward, color: Colors.white)),
+                  borderRadius: BorderRadius.circular(100)),
+              child: const Icon(Icons.arrow_upward, color: Colors.white)),
         ],
       );
     }
@@ -255,10 +272,9 @@ class _UserLocationLayerState extends State<UserLocationLayer> {
               _positionMarkerStates = _;
             },
             tiltRotate: _mapController._cameraPosition?.tilt ?? 0,
-            alignment: Alignment.center,
-            child: _updateUserLocationWidget(),
             width: _iconSize,
-            height: _iconSize)
-        : SizedBox.shrink();
+            height: _iconSize,
+            child: _updateUserLocationWidget())
+        : const SizedBox.shrink();
   }
 }

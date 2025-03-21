@@ -110,8 +110,8 @@ class PlaceFillBodyState extends State<PlaceFillBody> {
     controller!.addPolygon(
       PolygonOptions(
           geometry: _defaultGeometry,
-          polygonColor: Color(0xFFFF0000),
-          polygonOutlineColor: Color(0xFFFF0000)),
+          polygonColor: const Color(0xFFFF0000),
+          polygonOutlineColor: const Color(0xFFFF0000)),
     );
     setState(() {
       _fillCount += 1;
@@ -160,7 +160,7 @@ class PlaceFillBodyState extends State<PlaceFillBody> {
 
   Future<void> _changeFillColor() async {
     var current = _selectedFill!.options.polygonColor;
-    current ??= Color(0xFFFF0000);
+    current ??= const Color(0xFFFF0000);
 
     _updateSelectedFill(
       const PolygonOptions(polygonColor: Color(0xFFFFFF00)),
@@ -169,7 +169,7 @@ class PlaceFillBodyState extends State<PlaceFillBody> {
 
   Future<void> _changeFillOutlineColor() async {
     var current = _selectedFill!.options.polygonOutlineColor;
-    current ??= Color(0xFFFF0000);
+    current ??= const Color(0xFFFF0000);
 
     _updateSelectedFill(
       const PolygonOptions(polygonOutlineColor: Color(0xFFFFFF00)),

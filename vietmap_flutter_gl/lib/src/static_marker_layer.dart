@@ -1,4 +1,4 @@
-part of vietmap_gl;
+part of '../vietmap_flutter_gl.dart';
 
 class StaticMarkerLayer extends StatefulWidget {
   final List<StaticMarker> markers;
@@ -13,11 +13,10 @@ class StaticMarkerLayer extends StatefulWidget {
   /// use [StaticMarkerLayer] inside a [Stack], that contain [VietmapGL] and [StaticMarkerLayer] to work properly
   /// [VietmapGL.trackCameraPosition] must be set to true to work properly
   const StaticMarkerLayer(
-      {Key? key,
+      {super.key,
       required this.markers,
       required this.mapController,
-      this.ignorePointer})
-      : super(key: key);
+      this.ignorePointer});
 
   @override
   State<StaticMarkerLayer> createState() => _StaticMarkerLayerState();
@@ -27,51 +26,52 @@ class _StaticMarkerLayerState extends State<StaticMarkerLayer> {
   VietmapController get _mapController => widget.mapController;
   List<Widget> _markers = [];
   List<MarkerState> _markerStates = [];
-  final Random _rnd = new Random();
+  final Random _rnd = Random();
   late Size size;
   @override
   void didUpdateWidget(covariant StaticMarkerLayer oldWidget) {
-    var param = <LatLng>[];
+    final param = <LatLng>[];
     for (var i = 0; i < widget.markers.length; i++) {
       param.add(widget.markers[i].latLng);
     }
-    var _newMarker = <Widget>[];
-    var _newMarkerStates = <MarkerState>[];
-    Map<String, bool> _newMarkerKey = {};
+    final newMarker = <Widget>[];
+    final newMarkerStates = <MarkerState>[];
+    final newMarkerKey = <String, bool>{};
     _mapController.toScreenLocationBatch(param).then((value) {
       if (value.isEmpty || widget.markers.isEmpty) {
       } else {
         for (var i = 0; i < widget.markers.length; i++) {
-          var point = Point<double>(value[i].x as double, value[i].y as double);
-          String key = _rnd.nextInt(100000).toString() +
+          final point =
+              Point<double>(value[i].x as double, value[i].y as double);
+          var key = _rnd.nextInt(100000).toString() +
               widget.markers[i].latLng.latitude.toString() +
               widget.markers[i].latLng.longitude.toString();
-          if (!_newMarkerKey.containsKey(key)) {
-            _newMarkerKey[key] = true;
+          if (!newMarkerKey.containsKey(key)) {
+            newMarkerKey[key] = true;
           } else {
             key += '.';
-            _newMarkerKey[key] = true;
+            newMarkerKey[key] = true;
           }
-          _newMarker.add(MarkerWidget(
+          newMarker.add(MarkerWidget(
             angle: _getRotateAngle(widget.markers[i].bearing),
             key: key,
             coordinate: widget.markers[i].latLng,
             initialPosition: point,
             addMarkerState: (_) {
-              _newMarkerStates.add(_);
+              newMarkerStates.add(_);
             },
             rotateOrigin: widget.markers[i].rotateOrigin,
-            child: widget.markers[i].child,
             width: widget.markers[i].width,
             height: widget.markers[i].height,
             alignment: widget.markers[i].alignment,
+            child: widget.markers[i].child,
           ));
         }
       }
 
       setState(() {
-        _markers = _newMarker;
-        _markerStates = _newMarkerStates;
+        _markers = newMarker;
+        _markerStates = newMarkerStates;
       });
     });
     super.didUpdateWidget(oldWidget);
@@ -95,9 +95,9 @@ class _StaticMarkerLayerState extends State<StaticMarkerLayer> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (Platform.isIOS) {
-        await Future.delayed(Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 100));
       }
-      var param = <LatLng>[];
+      final param = <LatLng>[];
       for (var i = 0; i < widget.markers.length; i++) {
         param.add(widget.markers[i].latLng);
       }
@@ -105,7 +105,8 @@ class _StaticMarkerLayerState extends State<StaticMarkerLayer> {
       _mapController.toScreenLocationBatch(param).then((value) {
         if (value.isEmpty || widget.markers.isEmpty) return;
         for (var i = 0; i < widget.markers.length; i++) {
-          var point = Point<double>(value[i].x as double, value[i].y as double);
+          final point =
+              Point<double>(value[i].x as double, value[i].y as double);
           _addMarker(point, widget.markers[i]);
         }
       });
@@ -150,10 +151,10 @@ class _StaticMarkerLayerState extends State<StaticMarkerLayer> {
         coordinate: markerModel.latLng,
         initialPosition: point,
         addMarkerState: _addMarkerStates,
-        child: markerModel.child,
         width: markerModel.width,
         height: markerModel.height,
         alignment: markerModel.alignment,
+        child: markerModel.child,
       ));
     });
   }

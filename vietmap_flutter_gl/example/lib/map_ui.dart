@@ -347,8 +347,8 @@ class MapUiBodyState extends State<MapUiBody> {
           .cast<List<LatLng>>();
       final fill = await mapController!.addPolygon(PolygonOptions(
         geometry: geometry,
-        polygonColor: Color(0xFFFF0000),
-        polygonOutlineColor: Color(0xFFFF0000),
+        polygonColor: const Color(0xFFFF0000),
+        polygonOutlineColor: const Color(0xFFFF0000),
         polygonOpacity: 0.6,
       ));
       setState(() {

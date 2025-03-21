@@ -1,7 +1,7 @@
 package vn.vietmap.vietmapgl;
 
 import android.content.Context;
-import vn.vietmap.android.Vietmap;
+import vn.vietmap.vietmapsdk.Vietmap;
 
 
 abstract class VietmapUtils {

@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.util.DisplayMetrics;
@@ -35,58 +36,59 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 //import com.mapbox.geojson.Feature;
 //import com.mapbox.geojson.FeatureCollection;
-import org.maplibre.android.gestures.AndroidGesturesManager;
-import org.maplibre.android.gestures.MoveGestureDetector;
-import org.maplibre.geojson.Feature;
-import org.maplibre.geojson.FeatureCollection;
+import vn.vietmap.android.gestures.AndroidGesturesManager;
+import vn.vietmap.android.gestures.MoveGestureDetector;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
 
-import vn.vietmap.android.constants.VietMapConstants;
-import vn.vietmap.android.geometry.LatLngQuad;
-import vn.vietmap.android.geometry.VisibleRegion;
-import vn.vietmap.android.location.LocationComponent;
-import vn.vietmap.android.location.LocationComponentActivationOptions;
-import vn.vietmap.android.location.LocationComponentOptions;
-import vn.vietmap.android.location.OnCameraTrackingChangedListener;
-import vn.vietmap.android.location.engine.LocationEngineDefault;
-import vn.vietmap.android.location.engine.LocationEngineProxy;
-import vn.vietmap.android.location.engine.LocationEngineRequest;
-import vn.vietmap.android.camera.CameraPosition;
-import vn.vietmap.android.camera.CameraUpdate;
-import vn.vietmap.android.camera.CameraUpdateFactory;
-import vn.vietmap.android.geometry.LatLng;
-import vn.vietmap.android.geometry.LatLngBounds;
-import vn.vietmap.android.location.engine.LocationEngineCallback;
-import vn.vietmap.android.location.engine.LocationEngineResult;
-import vn.vietmap.android.location.modes.CameraMode;
-import vn.vietmap.android.location.modes.RenderMode;
-import vn.vietmap.android.maps.MapView;
-import vn.vietmap.android.maps.OnMapReadyCallback;
-import vn.vietmap.android.maps.Style;
-import vn.vietmap.android.maps.VietMapGL;
-import vn.vietmap.android.maps.VietMapGLOptions;
-import vn.vietmap.android.offline.OfflineManager;
-import vn.vietmap.android.style.expressions.Expression;
-import vn.vietmap.android.style.layers.CircleLayer;
-import vn.vietmap.android.style.layers.FillExtrusionLayer;
-import vn.vietmap.android.style.layers.FillLayer;
-import vn.vietmap.android.style.layers.HeatmapLayer;
-import vn.vietmap.android.style.layers.HillshadeLayer;
-import vn.vietmap.android.style.layers.Layer;
-import vn.vietmap.android.style.layers.LineLayer;
-import vn.vietmap.android.style.layers.Property;
-import vn.vietmap.android.style.layers.PropertyValue;
-import vn.vietmap.android.style.layers.RasterLayer;
-import vn.vietmap.android.style.layers.SymbolLayer;
-import vn.vietmap.android.style.layers.PropertyFactory;
+import vn.vietmap.vietmapsdk.constants.VietMapConstants;
+import vn.vietmap.vietmapsdk.geometry.LatLngQuad;
+import vn.vietmap.vietmapsdk.geometry.VisibleRegion;
+import vn.vietmap.vietmapsdk.location.LocationComponent;
+import vn.vietmap.vietmapsdk.location.LocationComponentActivationOptions;
+import vn.vietmap.vietmapsdk.location.LocationComponentOptions;
+import vn.vietmap.vietmapsdk.location.OnCameraTrackingChangedListener;
+import vn.vietmap.vietmapsdk.location.engine.LocationEngineDefault;
+import vn.vietmap.vietmapsdk.location.engine.LocationEngineProxy;
+import vn.vietmap.vietmapsdk.location.engine.LocationEngineRequest;
+import vn.vietmap.vietmapsdk.camera.CameraPosition;
+import vn.vietmap.vietmapsdk.camera.CameraUpdate;
+import vn.vietmap.vietmapsdk.camera.CameraUpdateFactory;
+import vn.vietmap.vietmapsdk.geometry.LatLng;
+import vn.vietmap.vietmapsdk.geometry.LatLngBounds;
+import vn.vietmap.vietmapsdk.location.engine.LocationEngineCallback;
+import vn.vietmap.vietmapsdk.location.engine.LocationEngineResult;
+import vn.vietmap.vietmapsdk.location.modes.CameraMode;
+import vn.vietmap.vietmapsdk.location.modes.RenderMode;
+import vn.vietmap.vietmapsdk.maps.MapView;
+import vn.vietmap.vietmapsdk.maps.OnMapReadyCallback;
+import vn.vietmap.vietmapsdk.maps.Style;
+import vn.vietmap.vietmapsdk.maps.VietMapGL;
+import vn.vietmap.vietmapsdk.maps.VietMapGLOptions;
+import vn.vietmap.vietmapsdk.offline.OfflineManager;
+import vn.vietmap.vietmapsdk.style.expressions.Expression;
+import vn.vietmap.vietmapsdk.style.layers.CircleLayer;
+import vn.vietmap.vietmapsdk.style.layers.CustomLayer;
+import vn.vietmap.vietmapsdk.style.layers.FillExtrusionLayer;
+import vn.vietmap.vietmapsdk.style.layers.FillLayer;
+import vn.vietmap.vietmapsdk.style.layers.HeatmapLayer;
+import vn.vietmap.vietmapsdk.style.layers.HillshadeLayer;
+import vn.vietmap.vietmapsdk.style.layers.Layer;
+import vn.vietmap.vietmapsdk.style.layers.LineLayer;
+import vn.vietmap.vietmapsdk.style.layers.Property;
+import vn.vietmap.vietmapsdk.style.layers.PropertyValue;
+import vn.vietmap.vietmapsdk.style.layers.RasterLayer;
+import vn.vietmap.vietmapsdk.style.layers.SymbolLayer;
+import vn.vietmap.vietmapsdk.style.layers.PropertyFactory;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
-import vn.vietmap.android.style.sources.CustomGeometrySource;
-import vn.vietmap.android.style.sources.GeoJsonSource;
-import vn.vietmap.android.style.sources.ImageSource;
-import vn.vietmap.android.style.sources.Source;
-import vn.vietmap.android.style.sources.VectorSource;
+import vn.vietmap.vietmapsdk.style.sources.CustomGeometrySource;
+import vn.vietmap.vietmapsdk.style.sources.GeoJsonSource;
+import vn.vietmap.vietmapsdk.style.sources.ImageSource;
+import vn.vietmap.vietmapsdk.style.sources.Source;
+import vn.vietmap.vietmapsdk.style.sources.VectorSource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -115,6 +117,7 @@ final class VietmapGLController
         MethodChannel.MethodCallHandler,
         OnMapReadyCallback,
         OnCameraTrackingChangedListener,
+        MapView.OnCameraDidChangeListener,
         PlatformView {
   private static final String TAG = "VietmapGLController";
   private final int id;
@@ -127,6 +130,7 @@ final class VietmapGLController
    * This container is returned as the final platform view instead of returning `mapView`.
    * See {@link VietmapGLController#destroyMapViewIfNecessary()} for details.
    */
+  private ArrayList<MarkerLayerData> markerLayerData = new ArrayList<>();
   private FrameLayout mapViewContainer;
   private MapView mapView;
   private VietMapGL vietmapGL;
@@ -142,7 +146,7 @@ final class VietmapGLController
   private Style style;
   private Feature draggedFeature;
   private AndroidGesturesManager androidGesturesManager;
-
+  private Boolean logoEnabled = true;
   private LatLng dragOrigin;
   private LatLng dragPrevious;
 
@@ -168,11 +172,11 @@ final class VietmapGLController
           if (null != bounds) {
             vietmapGL.setLatLngBoundsForCameraTarget(bounds);
           }
-
           vietmapGL.addOnMapClickListener(VietmapGLController.this);
           vietmapGL.addOnMapLongClickListener(VietmapGLController.this);
-
           methodChannel.invokeMethod("map#onStyleLoaded", null);
+
+          updateLogoEnabled();
         }
       };
 
@@ -277,6 +281,8 @@ final class VietmapGLController
             methodChannel.invokeMethod("map#onMapRendered", null));
     mapView.addOnDidBecomeIdleListener(this);
 
+    mapView.addOnCameraDidChangeListener(this);
+
     setStyleString(styleStringInitial);
   }
 
@@ -287,7 +293,7 @@ final class VietmapGLController
     styleString = styleString.trim();
 
     // Check if json, url, absolute path or asset path:
-    if (styleString == null || styleString.isEmpty()) {
+    if (styleString == null || styleString.equals("")) {
       Log.e(TAG, "setStyleString - string empty or null");
     } else if (styleString.startsWith("{") || styleString.startsWith("[")) {
       vietmapGL.setStyle(new Style.Builder().fromJson(styleString), onStyleLoadedCallback);
@@ -306,50 +312,53 @@ final class VietmapGLController
     }
   }
 
+  private void customLocationComponentOptions(@NonNull Style style){
+    if(locationComponent == null || style==null) return;
+    LocationComponentActivationOptions.Builder options =
+            LocationComponentActivationOptions
+                    .builder(context, style);
+//                      .locationComponentOptions(buildLocationComponentOptions(style));
+    if (this.isCustomizeLocationMarker) {
 
+      Log.d(TAG, "enableLocationComponent: customizeLocationMarker");
+      final LocationComponentOptions.Builder optionsBuilder =
+              LocationComponentOptions.builder(context);
+      optionsBuilder.trackingGesturesManagement(true);
+
+//      final String lastLayerId = getLastLayerOnStyle(style);
+
+//      if (lastLayerId != null) {
+//        optionsBuilder.layerAbove(lastLayerId);
+//      }
+
+      optionsBuilder.backgroundDrawable(R.drawable.ic_action_name);
+      optionsBuilder.foregroundDrawable(R.drawable.ic_action_name);
+      optionsBuilder.bearingDrawable(R.drawable.ic_action_name);
+      optionsBuilder.gpsDrawable(R.drawable.ic_action_name);
+      optionsBuilder.backgroundDrawableStale(R.drawable.ic_action_name);
+      optionsBuilder.foregroundDrawableStale(R.drawable.ic_action_name);
+      optionsBuilder.pulseColor(Color.TRANSPARENT);
+      optionsBuilder.accuracyColor(Color.TRANSPARENT);
+      optionsBuilder.bearingTintColor(Color.TRANSPARENT);
+      optionsBuilder.backgroundStaleTintColor(Color.TRANSPARENT);
+      optionsBuilder.backgroundTintColor(Color.TRANSPARENT);
+      optionsBuilder.foregroundStaleTintColor(Color.TRANSPARENT);
+      optionsBuilder.foregroundTintColor(Color.TRANSPARENT);
+
+      optionsBuilder.elevation(0);
+      optionsBuilder.pulseAlpha(0);
+      optionsBuilder.accuracyAlpha(0);
+      options.locationComponentOptions(optionsBuilder.build());
+    }
+    locationComponent.activateLocationComponent(options.build());
+  }
 
   @SuppressWarnings({"MissingPermission"})
   private void enableLocationComponent(@NonNull Style style) {
     if (hasLocationPermission()) {
 
       locationComponent = vietmapGL.getLocationComponent();
-
-      LocationComponentActivationOptions.Builder options =
-              LocationComponentActivationOptions
-                      .builder(context, style);
-//                      .locationComponentOptions(buildLocationComponentOptions(style));
-
-      if (this.isCustomizeLocationMarker) {
-        Log.d(TAG, "enableLocationComponent: customizeLocationMarker");
-        final LocationComponentOptions.Builder optionsBuilder =
-                LocationComponentOptions.builder(context);
-        optionsBuilder.trackingGesturesManagement(true);
-
-        final String lastLayerId = getLastLayerOnStyle(style);
-        if (lastLayerId != null) {
-          optionsBuilder.layerAbove(lastLayerId);
-        }
-        optionsBuilder.backgroundDrawable(R.drawable.ic_action_name);
-        optionsBuilder.foregroundDrawable(R.drawable.ic_action_name);
-        optionsBuilder.bearingDrawable(R.drawable.ic_action_name);
-        optionsBuilder.gpsDrawable(R.drawable.ic_action_name);
-        optionsBuilder.backgroundDrawableStale(R.drawable.ic_action_name);
-        optionsBuilder.foregroundDrawableStale(R.drawable.ic_action_name);
-        optionsBuilder.pulseColor(Color.TRANSPARENT);
-        optionsBuilder.accuracyColor(Color.TRANSPARENT);
-        optionsBuilder.bearingTintColor(Color.TRANSPARENT);
-        optionsBuilder.backgroundStaleTintColor(Color.TRANSPARENT);
-        optionsBuilder.backgroundTintColor(Color.TRANSPARENT);
-        optionsBuilder.foregroundStaleTintColor(Color.TRANSPARENT);
-        optionsBuilder.foregroundTintColor(Color.TRANSPARENT);
-
-        optionsBuilder.elevation(0);
-        optionsBuilder.pulseAlpha(0);
-        optionsBuilder.accuracyAlpha(0);
-        options.locationComponentOptions(optionsBuilder.build());
-      }
-
-      locationComponent.activateLocationComponent(options.build());
+      customLocationComponentOptions(style);
       locationComponent.setLocationComponentEnabled(true);
       locationComponent.setMaxAnimationFps(30);
       updateMyLocationTrackingMode();
@@ -398,8 +407,39 @@ final class VietmapGLController
     if (lastLayerId != null) {
       optionsBuilder.layerAbove(lastLayerId);
     }
+    if(isCustomizeLocationMarker) {
+      optionsBuilder.backgroundDrawable(R.drawable.ic_action_name);
+      optionsBuilder.foregroundDrawable(R.drawable.ic_action_name);
+      optionsBuilder.bearingDrawable(R.drawable.ic_action_name);
+      optionsBuilder.gpsDrawable(R.drawable.ic_action_name);
+      optionsBuilder.backgroundDrawableStale(R.drawable.ic_action_name);
+      optionsBuilder.foregroundDrawableStale(R.drawable.ic_action_name);
+      optionsBuilder.pulseColor(Color.TRANSPARENT);
+      optionsBuilder.accuracyColor(Color.TRANSPARENT);
+      optionsBuilder.bearingTintColor(Color.TRANSPARENT);
+      optionsBuilder.backgroundStaleTintColor(Color.TRANSPARENT);
+      optionsBuilder.backgroundTintColor(Color.TRANSPARENT);
+      optionsBuilder.foregroundStaleTintColor(Color.TRANSPARENT);
+      optionsBuilder.foregroundTintColor(Color.TRANSPARENT);
+
+      optionsBuilder.elevation(0);
+      optionsBuilder.pulseAlpha(0);
+      optionsBuilder.accuracyAlpha(0);
+    }
     return optionsBuilder.build();
   }
+
+//  private LocationComponentOptions buildLocationComponentOptions(Style style) {
+//    final LocationComponentOptions.Builder optionsBuilder =
+//            LocationComponentOptions.builder(context);
+//    optionsBuilder.trackingGesturesManagement(true);
+//
+//    final String lastLayerId = getLastLayerOnStyle(style);
+//    if (lastLayerId != null) {
+//      optionsBuilder.layerAbove(lastLayerId);
+//    }
+//    return optionsBuilder.build();
+//  }
 
   private void onUserLocationUpdate(Location location) {
     if (location == null) {
@@ -935,10 +975,15 @@ final class VietmapGLController
           updateMyLocationEnabled();
         }
       }
+      case "map#updateLogoEnabled":
+        {
+          logoEnabled = call.argument("isEnable");
+          updateLogoEnabled();
+        }
       case "map#queryRenderedFeatures":
         {
           Map<String, Object> reply = new HashMap<>();
-          List<org.maplibre.geojson.Feature> features;
+          List<com.mapbox.geojson.Feature> features;
           if(!call.hasArgument("layerIds")) return;
 
           String[] layerIds = ((List<String>) call.argument("layerIds")).toArray(new String[0]);
@@ -1111,6 +1156,9 @@ final class VietmapGLController
           result.success(null);
           break;
         }
+        case "camera#updateLayerProperties":
+          updateLayerProperties(call);
+          break;
         case "layer#setProperties": {
           final String layerId = call.argument("layerId");
 
@@ -1941,14 +1989,18 @@ final class VietmapGLController
   @Override
   public void setLocationEngineProperties(LocationEngineRequest locationEngineRequest){
     if(locationComponent != null){
-        if(locationEngineRequest.getPriority() == LocationEngineRequest.PRIORITY_HIGH_ACCURACY){
-            locationComponent.setLocationEngine(new LocationEngineProxy(
-                new VietmapGLGPSLocationEngine(context)));
-     } else {
-       locationComponent.setLocationEngine(
-               LocationEngineDefault.INSTANCE.getDefaultLocationEngine(context));
-            }
-      locationComponent.setLocationEngineRequest(locationEngineRequest);
+//        if(locationEngineRequest.getPriority() == LocationEngineRequest.PRIORITY_HIGH_ACCURACY){
+//            locationComponent.setLocationEngine(new LocationEngineProxy(
+//                new VietmapGLGPSLocationEngine(context)));
+//     } else {
+//       locationComponent.setLocationEngine(
+//               LocationEngineDefault.INSTANCE.getDefaultLocationEngine(context));
+//            }
+
+      locationComponent.setLocationEngine(
+              LocationEngineDefault.INSTANCE.getDefaultLocationEngine(context));
+
+//      locationComponent.setLocationEngineRequest(locationEngineRequest);
     }
   }
 
@@ -2104,9 +2156,15 @@ final class VietmapGLController
         break;
     }
   }
+  private void updateLogoEnabled(){
+    if(vietmapGL == null){
+      return;
+    }
+    vietmapGL.getUiSettings().setLogoEnabled(this.logoEnabled);
 
+  }
   private void updateMyLocationEnabled() {
-    if (this.locationComponent == null && myLocationEnabled) {
+    if (this.locationComponent == null && myLocationEnabled && vietmapGL.getStyle() != null) {
       enableLocationComponent(vietmapGL.getStyle());
     }
 
@@ -2159,11 +2217,13 @@ final class VietmapGLController
           CameraMode.NONE, CameraMode.TRACKING, CameraMode.TRACKING_COMPASS, CameraMode.TRACKING_GPS
         };
     locationComponent.setCameraMode(mapboxTrackingModes[this.myLocationTrackingMode]);
+    customLocationComponentOptions(style);
   }
 
   private void updateMyLocationRenderMode() {
     int[] mapboxRenderModes = new int[] {RenderMode.NORMAL, RenderMode.COMPASS, RenderMode.GPS};
     locationComponent.setRenderMode(mapboxRenderModes[this.myLocationRenderMode]);
+    customLocationComponentOptions(style);
   }
 
   private boolean hasLocationPermission() {
@@ -2313,6 +2373,44 @@ final class VietmapGLController
     dragOrigin = null;
     dragPrevious = null;
   }
+
+  void updateLayerProperties(MethodCall call){
+    String layerId = call.argument("layerId");
+    Object markers = call.argument("markers");
+      if (markers != null) {
+        boolean isLayerExist = false;
+        List<MarkerData> markerDataList = Convert.interpretMarkers((ArrayList) markers);
+        for (int i = 0; i < markerLayerData.size(); i++) {
+          MarkerLayerData markerLayerData = this.markerLayerData.get(i);
+          if (markerLayerData.getLayerId().equals(layerId)) {
+            markerLayerData.setMarkerData(markerDataList);
+            isLayerExist = true;
+            break;
+          }
+        }
+        if (!isLayerExist) {
+          MarkerLayerData markerLayerData = new MarkerLayerData(markerDataList, layerId);
+          this.markerLayerData.add(markerLayerData);
+        }
+      }
+  }
+
+  @Override
+  public void onCameraDidChange(boolean b) {
+    for (int i = 0; i < markerLayerData.size(); i++) {
+        MarkerLayerData markerLayerData = this.markerLayerData.get(i);
+      for (int j = 0; j < markerLayerData.getMarkerData().size(); j++) {
+        MarkerData markerData = markerLayerData.getMarkerData().get(j);
+        PointF point = vietmapGL
+                .getProjection()
+                .toScreenLocation(new LatLng(markerData.getLatitude(), markerData.getLongitude()));
+        markerData.setX((double) point.x);
+        markerData.setY((double) point.y);
+      }
+    }
+    methodChannel.invokeMethod("camera#onAnnotationUpdate", Convert.toJson(markerLayerData));
+  }
+
 
   /** Simple Listener to listen for the status of camera movements. */
   public class OnCameraMoveFinishedListener implements VietMapGL.CancelableCallback {

@@ -1,4 +1,4 @@
-part of vietmap_gl;
+part of '../vietmap_flutter_gl.dart';
 
 class ClusterLayer extends StatefulWidget {
   final List<Marker> markers;
@@ -21,14 +21,13 @@ class ClusterLayer extends StatefulWidget {
   /// use [ClusterLayer] inside a [Stack], that contain [VietmapGL] and [ClusterLayer] to work properly
   /// [VietmapGL.trackCameraPosition] must be set to true to work properly
   const ClusterLayer(
-      {Key? key,
+      {super.key,
       this.clusterTextStyle = const TextStyle(color: Colors.white),
       this.isShowClusterPointCount = true,
       required this.customClusterWidget,
       required this.markers,
       required this.mapController,
-      this.ignorePointer})
-      : super(key: key);
+      this.ignorePointer});
 
   @override
   State<ClusterLayer> createState() => _ClusterLayerState();
@@ -40,7 +39,7 @@ class _ClusterLayerState extends State<ClusterLayer> {
   List<MarkerWidget> _cluster = [];
   List<MarkerState> _markerStates = [];
   List<MarkerState> _clusterStates = [];
-  final Random _rnd = new Random();
+  final Random _rnd = Random();
   late Size size;
   late SuperclusterMutable<Marker> superCluster;
 
@@ -54,10 +53,10 @@ class _ClusterLayerState extends State<ClusterLayer> {
 
   _clusterCalculate() {
     final zoom = _mapController._cameraPosition?.zoom ?? 0;
-    var visibleMarkers = <Marker>[];
-    var clusters = <MutableLayerCluster<Marker>>[];
+    final visibleMarkers = <Marker>[];
+    final clusters = <MutableLayerCluster<Marker>>[];
     _mapController.getVisibleRegion().then((boundingBox) {
-      var clustersAndMarker = superCluster
+      final clustersAndMarker = superCluster
           .search(
               boundingBox.southwest.longitude,
               boundingBox.southwest.latitude,
@@ -82,7 +81,7 @@ class _ClusterLayerState extends State<ClusterLayer> {
                   .originalPoint);
         } else if (clustersAndMarker.elementAt(i)
             is MutableLayerCluster<Marker>) {
-          var cluster =
+          final cluster =
               clustersAndMarker.elementAt(i) as MutableLayerCluster<Marker>;
           clusters.add(cluster);
         }
@@ -93,104 +92,106 @@ class _ClusterLayerState extends State<ClusterLayer> {
   }
 
   _updateMarker(List<Marker> visibleMarkers) {
-    var param = <LatLng>[];
+    final param = <LatLng>[];
     for (var i = 0; i < visibleMarkers.length; i++) {
       param.add(visibleMarkers[i].latLng);
     }
-    var _newMarker = <MarkerWidget>[];
-    var _newMarkerStates = <MarkerState>[];
-    Map<String, bool> _newMarkerKey = {};
+    final newMarker = <MarkerWidget>[];
+    final newMarkerStates = <MarkerState>[];
+    final newMarkerKey = <String, bool>{};
     _mapController.toScreenLocationBatch(param).then((value) {
       if (value.isEmpty || visibleMarkers.isEmpty) {
       } else {
-        List<List<double>> points = [];
+        final points = <List<double>>[];
         for (var i = 0; i < visibleMarkers.length; i++) {
-          var point = Point<double>(value[i].x as double, value[i].y as double);
+          final point =
+              Point<double>(value[i].x as double, value[i].y as double);
           points.add([point.x, point.y]);
-          String key = _rnd.nextInt(100000).toString() +
+          var key = _rnd.nextInt(100000).toString() +
               visibleMarkers[i].latLng.latitude.toString() +
               visibleMarkers[i].latLng.longitude.toString();
-          if (!_newMarkerKey.containsKey(key)) {
-            _newMarkerKey[key] = true;
+          if (!newMarkerKey.containsKey(key)) {
+            newMarkerKey[key] = true;
           } else {
             key += '.';
-            _newMarkerKey[key] = true;
+            newMarkerKey[key] = true;
           }
 
-          _newMarker.add(MarkerWidget(
+          newMarker.add(MarkerWidget(
             key: key,
             coordinate: visibleMarkers[i].latLng,
             initialPosition: point,
             addMarkerState: (_) {
-              _newMarkerStates.add(_);
+              newMarkerStates.add(_);
             },
-            child: visibleMarkers[i].child,
             width: visibleMarkers[i].width,
             height: visibleMarkers[i].height,
             alignment: visibleMarkers[i].alignment,
+            child: visibleMarkers[i].child,
           ));
         }
       }
       setState(() {
-        _markers = _newMarker;
-        _markerStates = _newMarkerStates;
+        _markers = newMarker;
+        _markerStates = newMarkerStates;
       });
     });
   }
 
   _updateCluster(List<MutableLayerCluster<Marker>> clusters) {
-    var param = <LatLng>[];
+    final param = <LatLng>[];
     for (var i = 0; i < clusters.length; i++) {
       param.add(LatLng(clusters[i].latitude, clusters[i].longitude));
     }
-    var _newMarker = <MarkerWidget>[];
-    var _newMarkerStates = <MarkerState>[];
-    Map<String, bool> _newMarkerKey = {};
+    final newMarker = <MarkerWidget>[];
+    final newMarkerStates = <MarkerState>[];
+    final newMarkerKey = <String, bool>{};
     _mapController.toScreenLocationBatch(param).then((value) {
       if (value.isEmpty || clusters.isEmpty) {
       } else {
-        List<List<double>> points = [];
+        final points = <List<double>>[];
         for (var i = 0; i < clusters.length; i++) {
-          var point = Point<double>(value[i].x as double, value[i].y as double);
+          final point =
+              Point<double>(value[i].x as double, value[i].y as double);
           points.add([point.x, point.y]);
-          String key = _rnd.nextInt(100000).toString() +
+          var key = _rnd.nextInt(100000).toString() +
               clusters[i].latitude.toString() +
               clusters[i].longitude.toString();
-          if (!_newMarkerKey.containsKey(key)) {
-            _newMarkerKey[key] = true;
+          if (!newMarkerKey.containsKey(key)) {
+            newMarkerKey[key] = true;
           } else {
             key += '.';
-            _newMarkerKey[key] = true;
+            newMarkerKey[key] = true;
           }
 
-          _newMarker.add(MarkerWidget(
+          newMarker.add(MarkerWidget(
             key: key,
             coordinate: LatLng(clusters[i].latitude, clusters[i].longitude),
             initialPosition: point,
             addMarkerState: (_) {
-              _newMarkerStates.add(_);
+              newMarkerStates.add(_);
             },
+            width: 30,
+            height: 30,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 getNearestBottomValue(clusters[i].childPointCount),
-                widget.isShowClusterPointCount
-                    ? Text(
-                        clusters[i].childPointCount.toString(),
-                        style: widget.clusterTextStyle,
-                      )
-                    : SizedBox.shrink(),
+                if (widget.isShowClusterPointCount)
+                  Text(
+                    clusters[i].childPointCount.toString(),
+                    style: widget.clusterTextStyle,
+                  )
+                else
+                  const SizedBox.shrink(),
               ],
             ),
-            width: 30,
-            height: 30,
-            alignment: Alignment.center,
           ));
         }
       }
       setState(() {
-        _cluster = _newMarker;
-        _clusterStates = _newMarkerStates;
+        _cluster = newMarker;
+        _clusterStates = newMarkerStates;
       });
     });
   }
@@ -221,7 +222,7 @@ class _ClusterLayerState extends State<ClusterLayer> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (Platform.isIOS) {
-        await Future.delayed(Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 100));
       }
 
       _clusterCalculate();
@@ -274,14 +275,14 @@ class _ClusterLayerState extends State<ClusterLayer> {
     // Get all keys and sort them in descending order
 
     // Find the nearest smaller or equal key
-    for (int key in sortedKeys) {
+    for (final key in sortedKeys) {
       if (key <= input) {
-        return widget.customClusterWidget[key] ?? SizedBox.shrink();
+        return widget.customClusterWidget[key] ?? const SizedBox.shrink();
       }
     }
 
     // If no such key is found, return null or handle it appropriately
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   }
 
   @override

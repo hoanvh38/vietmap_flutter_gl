@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "org.maplibre.example"
+    namespace "com.mapbox.example"
     compileSdkVersion 34
     ndkVersion "27.0.12077973"
 

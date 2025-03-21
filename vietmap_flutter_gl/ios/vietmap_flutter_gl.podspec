@@ -24,5 +24,6 @@ A new Flutter plugin.
   s.ios.deployment_target = '12.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386', 'FRAMEWORK_SEARCH_PATHS' => '$(PROJECT_DIR)/Frameworks' }
   s.vendored_frameworks = 'Frameworks/*.xcframework'
+  s.resource_bundles = {'vietmap_flutter_gl_privacy' => ['vietmap_flutter_gl/Sources/vietmap_flutter_gl/Resources/PrivacyInfo.xcprivacy']}
 end
 

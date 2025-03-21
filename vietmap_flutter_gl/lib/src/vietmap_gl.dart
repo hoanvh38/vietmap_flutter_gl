@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of vietmap_gl;
+part of '../vietmap_flutter_gl.dart';
 
 enum AnnotationType { polygon, line, circle, symbol }
 
@@ -13,6 +13,7 @@ typedef MapCreatedCallback = void Function(VietmapController controller);
 class VietmapGL extends StatefulWidget {
   const VietmapGL({
     super.key,
+    this.logoEnabled = true,
     required this.initialCameraPosition,
     this.styleString = VietmapStyles.demo,
     this.onMapCreated,
@@ -136,6 +137,9 @@ class VietmapGL extends StatefulWidget {
   /// If `myLocationEnabled` is true, the SDK will disable the default location.
   /// Please use `UserLocationLayer` to customize the user location icon.
   final bool isCustomizeUserIcon;
+
+  /// True if the map should show a logo.
+  final bool logoEnabled;
 
   /// Preferred bounds for the camera zoom level.
   ///
@@ -353,6 +357,7 @@ class _VietmapGLState extends State<VietmapGL> {
     _controller.complete(controller);
     widget.onMapCreated?.call(controller);
     controller.updateUserLocationLayerIcon(widget.isCustomizeUserIcon);
+    controller.updateLogoEnabled(widget.logoEnabled);
   }
 }
 
@@ -362,6 +367,7 @@ class _VietmapGLState extends State<VietmapGL> {
 /// "do not change this configuration option".
 class _VietmapOptions {
   _VietmapOptions({
+    this.logoEnabled = true,
     this.compassEnabled,
     this.cameraTargetBounds,
     this.styleString,
@@ -398,6 +404,7 @@ class _VietmapOptions {
           doubleClickZoomEnabled:
               map.doubleClickZoomEnabled ?? map.zoomGesturesEnabled,
           myLocationEnabled: map.myLocationEnabled,
+          logoEnabled: map.logoEnabled,
           myLocationTrackingMode: map.myLocationTrackingMode,
           myLocationRenderMode: map.myLocationRenderMode,
           logoViewMargins: map.logoViewMargins,
@@ -428,6 +435,8 @@ class _VietmapOptions {
   final bool? trackCameraPosition;
 
   final bool? myLocationEnabled;
+
+  final bool logoEnabled;
 
   final MyLocationTrackingMode? myLocationTrackingMode;
 

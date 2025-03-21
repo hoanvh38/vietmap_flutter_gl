@@ -1,4 +1,4 @@
-part of vietmap_gl;
+part of '../vietmap_flutter_gl.dart';
 
 // @Deprecated('MaplibreStyles was renamed to MapLibreStyles.')
 // typedef MaplibreStyles = VietmapStyles;

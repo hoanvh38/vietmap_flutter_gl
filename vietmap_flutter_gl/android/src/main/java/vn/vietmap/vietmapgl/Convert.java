@@ -10,13 +10,13 @@ import android.util.DisplayMetrics;
 
 import com.mapbox.geojson.Polygon;
 
-import vn.vietmap.android.camera.CameraPosition;
-import vn.vietmap.android.camera.CameraUpdate;
-import vn.vietmap.android.camera.CameraUpdateFactory;
-import vn.vietmap.android.geometry.LatLng;
-import vn.vietmap.android.location.engine.LocationEngineRequest;
-import vn.vietmap.android.geometry.LatLngBounds;
-import vn.vietmap.android.maps.VietMapGL;
+import vn.vietmap.vietmapsdk.camera.CameraPosition;
+import vn.vietmap.vietmapsdk.camera.CameraUpdate;
+import vn.vietmap.vietmapsdk.camera.CameraUpdateFactory;
+import vn.vietmap.vietmapsdk.geometry.LatLng;
+import vn.vietmap.vietmapsdk.location.engine.LocationEngineRequest;
+import vn.vietmap.vietmapsdk.geometry.LatLngBounds;
+import vn.vietmap.vietmapsdk.maps.VietMapGL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -113,6 +113,54 @@ class Convert {
     data.put("tilt", position.tilt);
     data.put("zoom", position.zoom);
     return data;
+  }
+
+  static List<MarkerData> interpretMarkers(ArrayList listData) {
+    if (listData == null) {
+      return null;
+    }
+    final List<MarkerData> markers = new ArrayList<>();
+    for (int i = 0; i < listData.size(); i++) {
+      final Map<?, ?> data = toMap(listData.get(i));
+        Double x = data.get("x") == null ? null : toDouble(data.get("x"));
+        Double y =  data.get("y") == null ? null : toDouble(data.get("y"));
+        final MarkerData marker = new MarkerData(
+                x,
+                y,
+                toDouble(data.get("latitude")),
+                toDouble(data.get("longitude")),
+                toString(data.get("markerId"))
+            );
+        markers.add(marker);
+    }
+    return markers;
+  }
+
+
+  static Object toJson(ArrayList<MarkerLayerData> data){
+    if (data == null) {
+      return null;
+    }
+    final ArrayList<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    final Map<String, Object> layerData = new HashMap<>();
+    for (MarkerLayerData markerLayerData : data) {
+      final Map<String, Object> markerLayerDataMap = new HashMap<>();
+      markerLayerDataMap.put("layer_id", markerLayerData.getLayerId());
+        final ArrayList<Map<String, Object>> markersData = new ArrayList<Map<String, Object>>();
+        for (MarkerData markerData : markerLayerData.getMarkerData()) {
+          final Map<String, Object> markerDataMap = new HashMap<>();
+          markerDataMap.put("marker_id", markerData.getMarkerId());
+          markerDataMap.put("x", markerData.getX());
+          markerDataMap.put("y", markerData.getY());
+          markerDataMap.put("latitude", markerData.getLatitude());
+          markerDataMap.put("longitude", markerData.getLongitude());
+          markersData.add(markerDataMap);
+        }
+        markerLayerDataMap.put("markersData", markersData);
+        result.add(markerLayerDataMap);
+    }
+    layerData.put("data", result);
+    return layerData;
   }
 
   private static Object toJson(LatLng latLng) {

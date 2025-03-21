@@ -24,7 +24,9 @@ class FullMapState extends State<FullMap> {
   var isLight = true;
 
   _onMapCreated(VietmapController controller) {
-    mapController = controller;
+    setState(() {
+      mapController = controller;
+    });
   }
 
   _onStyleLoadedCallback() {
@@ -40,19 +42,31 @@ class FullMapState extends State<FullMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: VietmapGL(
-      myLocationEnabled: true,
-      myLocationTrackingMode: MyLocationTrackingMode.trackingGps,
-      trackCameraPosition: true,
-      isCustomizeUserIcon: false,
-      // For mobile
-      styleString:
-          'https://maps.vietmap.vn/api/maps/light/styles.json?apikey=YOUR_API_KEY_HERE',
-      // For web:
-      // styleString: 'https://maps.vietmap.vn/mt/tm/style.json?apikey=YOUR_API_KEY_HERE',
-      onMapCreated: _onMapCreated,
-      initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
-      onStyleLoadedCallback: _onStyleLoadedCallback,
+        body: Stack(
+      children: [
+        VietmapGL(
+          myLocationEnabled: true,
+          logoEnabled: false,
+          myLocationTrackingMode: MyLocationTrackingMode.trackingGps,
+          trackCameraPosition: true,
+          // For mobile
+          styleString:
+              'https://maps.vietmap.vn/api/maps/light/styles.json?apikey=YOUR_API_KEY_HERE',
+          // For web:
+          // styleString: 'https://maps.vietmap.vn/mt/tm/style.json?apikey=YOUR_API_KEY_HERE',
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
+          onStyleLoadedCallback: _onStyleLoadedCallback,
+        ),
+        if (mapController != null)
+          MarkerLayer(markers: [
+            Marker(
+                child: const Icon(Icons.abc),
+                latLng: const LatLng(10.762622, 106.213233)),
+          ], mapController: mapController!),
+        if (mapController != null)
+          UserLocationLayer(mapController: mapController!),
+      ],
     ));
   }
 }

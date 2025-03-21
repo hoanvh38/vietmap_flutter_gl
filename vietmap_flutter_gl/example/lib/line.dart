@@ -67,8 +67,9 @@ class LineBodyState extends State<LineBody> {
   }
 
   _updateSelectedLine(PolylineOptions changes) async {
-    if (_selectedLine != null)
+    if (_selectedLine != null) {
       controller!.updatePolyline(_selectedLine!, changes);
+    }
   }
 
   void _add() {

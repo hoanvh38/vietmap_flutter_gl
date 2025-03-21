@@ -1,4 +1,4 @@
-part of vietmap_gl;
+part of '../vietmap_flutter_gl.dart';
 
 class MarkerWidget extends StatefulWidget {
   final Point initialPosition;
@@ -26,6 +26,7 @@ class MarkerWidget extends StatefulWidget {
       : super(key: Key(key));
 
   @override
+  // ignore: no_logic_in_create_state
   State<StatefulWidget> createState() {
     final state = MarkerState(initialPosition, angle);
     addMarkerState(state);
@@ -57,42 +58,42 @@ class MarkerState extends State {
       // iOS returns logical pixel while Android returns screen pixel
       ratio = Platform.isIOS ? 1.0 : MediaQuery.of(context).devicePixelRatio;
     }
-    var _leftPosition = 0.0;
-    var _topPosition = 0.0;
-    var width = (widget as MarkerWidget).width;
-    var height = (widget as MarkerWidget).height;
+    var leftPosition = 0.0;
+    var topPosition = 0.0;
+    final width = (widget as MarkerWidget).width;
+    final height = (widget as MarkerWidget).height;
     if ((widget as MarkerWidget).alignment == Alignment.center) {
-      _leftPosition = width / 2;
-      _topPosition = height / 2;
+      leftPosition = width / 2;
+      topPosition = height / 2;
     } else if ((widget as MarkerWidget).alignment == Alignment.bottomCenter) {
-      _leftPosition = width / 2;
-      _topPosition = height;
+      leftPosition = width / 2;
+      topPosition = height;
     } else if ((widget as MarkerWidget).alignment == Alignment.topLeft) {
-      _leftPosition = 0;
-      _topPosition = 0;
+      leftPosition = 0;
+      topPosition = 0;
     } else if ((widget as MarkerWidget).alignment == Alignment.topRight) {
-      _leftPosition = width;
-      _topPosition = 0;
+      leftPosition = width;
+      topPosition = 0;
     } else if ((widget as MarkerWidget).alignment == Alignment.bottomLeft) {
-      _leftPosition = 0;
-      _topPosition = height;
+      leftPosition = 0;
+      topPosition = height;
     } else if ((widget as MarkerWidget).alignment == Alignment.bottomRight) {
-      _leftPosition = width;
-      _topPosition = height;
+      leftPosition = width;
+      topPosition = height;
     } else if ((widget as MarkerWidget).alignment == Alignment.centerLeft) {
-      _leftPosition = 0;
-      _topPosition = height / 2;
+      leftPosition = 0;
+      topPosition = height / 2;
     } else if ((widget as MarkerWidget).alignment == Alignment.centerRight) {
-      _leftPosition = width;
-      _topPosition = height / 2;
+      leftPosition = width;
+      topPosition = height / 2;
     } else if ((widget as MarkerWidget).alignment == Alignment.topCenter) {
-      _leftPosition = width / 2;
-      _topPosition = 0;
+      leftPosition = width / 2;
+      topPosition = 0;
     }
 
     return Positioned(
-        left: _position.x / ratio - _leftPosition,
-        top: _position.y / ratio - _topPosition,
+        left: _position.x / ratio - leftPosition,
+        top: _position.y / ratio - topPosition,
         child: Transform(
             alignment: (widget as MarkerWidget).alignment,
             origin: (widget as MarkerWidget).rotateOrigin,

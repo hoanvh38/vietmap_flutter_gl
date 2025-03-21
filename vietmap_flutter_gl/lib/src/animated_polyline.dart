@@ -1,4 +1,4 @@
-part of vietmap_gl;
+part of '../vietmap_flutter_gl.dart';
 
 class PolylineAnimation {
   List<turf.Position> _coordinates = [];
@@ -7,7 +7,7 @@ class PolylineAnimation {
   double _totalDistance = 0;
 
   PolylineAnimation(List<LatLng> listLatLng) {
-    var lineStringFeature = makeLineString(listLatLng);
+    final lineStringFeature = makeLineString(listLatLng);
     _coordinates = lineStringFeature.geometry?.coordinates ?? [];
     _lineStringFeature = lineStringFeature;
 
@@ -17,7 +17,7 @@ class PolylineAnimation {
   }
 
   turf.Feature<turf.Point> coordinateFromStart(double distance) {
-    var pointAlong = turf.along(_lineStringFeature, distance);
+    final pointAlong = turf.along(_lineStringFeature, distance);
     pointAlong.properties = {
       'distance': distance,
       'nearestIndex': findNearestFloorIndex(distance)
@@ -41,7 +41,7 @@ class PolylineAnimation {
   }
 
   turf.Feature<turf.LineString> makeLineString(List<LatLng> latLng) {
-    List<turf.Position> listPoint =
+    final listPoint =
         latLng.map((e) => turf.Position(e.longitude, e.latitude)).toList();
     return turf.Feature<turf.LineString>(
         id: listPoint.hashCode.toString(),
@@ -76,14 +76,13 @@ class RouteSimulator {
   RouteSimulator(List<LatLng> listLatLng, TickerProvider vsync,
       {double speed = 0.001,
       bool repeat = false,
-      Duration duration = const Duration(seconds: 10),
+      this.duration = const Duration(seconds: 10),
       Function(LatLng)? onLocationChange,
       double upperBound = 2.2,
       AnimationBehavior animationBehavior = AnimationBehavior.normal}) {
     _polyline = PolylineAnimation(listLatLng);
     _currentDistance = 0;
     _speed = speed;
-    this.duration = duration;
     _onLocationChange = onLocationChange;
     _animationController = AnimationController(
         upperBound: upperBound,
@@ -134,15 +133,13 @@ class RouteSimulator {
       _currentDistance += _speed;
       // interpolate between previous to current distance
 
-      var currentPosition =
+      final currentPosition =
           _polyline.coordinateFromStart(_animationController.value);
-      var currentLatLng = LatLng(
+      final currentLatLng = LatLng(
           currentPosition.geometry?.coordinates.lat.toDouble() ?? 0,
           currentPosition.geometry?.coordinates.lng.toDouble() ?? 0);
 
-      if (_onLocationChange != null) {
-        _onLocationChange!(currentLatLng);
-      }
+      _onLocationChange?.call(currentLatLng);
       emit(currentPosition);
       previousLatLng = currentLatLng;
       if (_currentDistance > _polyline.totalDistance) {

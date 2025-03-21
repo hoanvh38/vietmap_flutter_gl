@@ -23,7 +23,7 @@ class MapLibreMapController: NSObject, FlutterPlatformView, MLNMapViewDelegate, 
     private var myLocationEnabled = false
     private var scrollingEnabled = true
     private var isCustomUserLocationIcon = true
-
+    private var isLogoEnabled = true
     private var interactiveFeatureLayerIds = Set<String>()
     private var addedShapesByLayer = [String: MLNShape]()
 
@@ -179,12 +179,17 @@ class MapLibreMapController: NSObject, FlutterPlatformView, MLNMapViewDelegate, 
             guard let isCustomizeLocationMarker = arguments["isEnable"] as? Bool else {return};
             self.isCustomUserLocationIcon = isCustomizeLocationMarker
             
-        
         case "map#recenter":
             // move map to the current location
             if let location = mapView.userLocation?.location?.coordinate {
                 mapView.setCenter(location, animated: true)
             }
+        
+        case "map#updateLogoEnabled":
+            guard let arguments = methodCall.arguments as? [String: Any] else {return}
+            isLogoEnabled = arguments["isEnable"] as! Bool;
+            updateLogoEnabled();
+          
         case "map#updateMyLocationTrackingMode":
             guard let arguments = methodCall.arguments as? [String: Any] else { return }
             if let myLocationTrackingMode = arguments["mode"] as? UInt,
@@ -990,7 +995,9 @@ class MapLibreMapController: NSObject, FlutterPlatformView, MLNMapViewDelegate, 
     private func updateMyLocationEnabled() {
         mapView.showsUserLocation = myLocationEnabled
     }
-
+    private func updateLogoEnabled(){
+        mapView.logoView.isHidden = !isLogoEnabled
+    }
     private func getCamera() -> MLNMapCamera? {
         return trackCameraPosition ? mapView.camera : nil
     }

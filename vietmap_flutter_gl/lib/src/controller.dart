@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of vietmap_gl;
+part of '../vietmap_flutter_gl.dart';
 
 typedef OnMapClickCallback = void Function(
     Point<double> point, LatLng coordinates);
@@ -20,12 +20,14 @@ typedef OnFeatureDragnCallback = void Function(dynamic id,
 typedef OnMapLongClickCallback = void Function(
     Point<double> point, LatLng coordinates);
 
-typedef void OnMapRenderedCallback();
+typedef OnMapRenderedCallback = void Function();
 
 typedef OnStyleLoadedCallback = void Function();
 
 typedef OnUserLocationUpdated = void Function(UserLocation location);
 
+typedef OnAnnotationUpdate = void Function(Map<String, dynamic> data);
+typedef OnDidFinishedRenderingFrame = void Function();
 typedef OnCameraTrackingDismissedCallback = void Function();
 typedef OnCameraTrackingChangedCallback = void Function(
     MyLocationTrackingMode mode);
@@ -83,6 +85,8 @@ class VietmapController extends ChangeNotifier {
     this.onStyleLoadedCallback,
     this.onMapClick,
     this.onMapLongClick,
+    this.onAnnotationUpdate,
+    this.onDidFinishedRenderingFrame,
     //this.onAttributionClick,
     this.onCameraTrackingDismissed,
     this.onCameraTrackingChanged,
@@ -94,7 +98,16 @@ class VietmapController extends ChangeNotifier {
   }) : _vietmapGLPlatform = vietmapGLPlatform {
     _cameraPosition = initialCameraPosition;
 
-    bool _isFirstRenderedCalled = false;
+    var isFirstRenderedCalled = false;
+
+    // _vietmapGLPlatform.onAnnotationUpdate.add((data) {
+    //   onAnnotationUpdate?.call(data);
+    // });
+
+    // _vietmapGLPlatform.onDidFinishedRenderingFrame.add((_) {
+    //   onDidFinishedRenderingFrame?.call();
+    // });
+
     _vietmapGLPlatform.onFeatureTappedPlatform.add((payload) {
       for (final fun
           in List<OnFeatureInteractionCallback>.from(onFeatureTapped)) {
@@ -102,14 +115,14 @@ class VietmapController extends ChangeNotifier {
             payload["layerId"]);
       }
     });
-
+    // _vietmapGLPlatform.onDidFinishedRenderingFrame.add((_) {
+    //   onDidFinishedRenderingFrame?.call();
+    // });
     _vietmapGLPlatform.onMapRenderedPlatform.add((_) {
-      if (onMapRendered != null) {
-        onMapRendered!();
-      }
-      if (onMapFirstRendered != null && !_isFirstRenderedCalled) {
+      onMapRendered?.call();
+      if (onMapFirstRendered != null && !isFirstRenderedCalled) {
         onMapFirstRendered!();
-        _isFirstRenderedCalled = true;
+        isFirstRenderedCalled = true;
       }
     });
     _vietmapGLPlatform.onFeatureDraggedPlatform.add((payload) {
@@ -208,6 +221,8 @@ class VietmapController extends ChangeNotifier {
   final OnUserLocationUpdated? onUserLocationUpdated;
 
   final OnCameraTrackingDismissedCallback? onCameraTrackingDismissed;
+  final OnAnnotationUpdate? onAnnotationUpdate;
+  final OnDidFinishedRenderingFrame? onDidFinishedRenderingFrame;
   final OnCameraTrackingChangedCallback? onCameraTrackingChanged;
 
   final OnCameraIdleCallback? onCameraIdle;
@@ -611,6 +626,10 @@ class VietmapController extends ChangeNotifier {
 
   Future<void> updateUserLocationLayerIcon(bool isEnable) async {
     return _vietmapGLPlatform.updateUserLocationLayerIcon(isEnable);
+  }
+
+  Future<void> updateLogoEnabled(bool isEnable) async {
+    return _vietmapGLPlatform.updateLogoEnabled(isEnable);
   }
 
   /// Add a raster layer to the map with the given properties
@@ -1209,6 +1228,10 @@ class VietmapController extends ChangeNotifier {
   Future<LatLngBounds> getVisibleRegion() async {
     return _vietmapGLPlatform.getVisibleRegion();
   }
+
+  // Future<void> updateLayerProperties(MarkerLayerPositionData properties) async {
+  //   return _vietmapGLPlatform.updateLayerProperties(properties);
+  // }
 
   /// Adds an image to the style currently displayed in the map, so that it can later be referred to by the provided name.
   ///
