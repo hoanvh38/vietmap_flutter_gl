@@ -33,7 +33,12 @@ abstract class VietmapGlPlatform {
 
   final onMapRenderedPlatform = ArgumentCallbacks<void>();
 
+  final onDidFinishedRenderingFrame = ArgumentCallbacks<void>();
+
   final onMapClickPlatform = ArgumentCallbacks<Map<String, dynamic>>();
+
+  final onAnnotationUpdate = ArgumentCallbacks<Map<String, dynamic>>();
+  //List<MarkerLayerPositionData>
 
   final onMapLongClickPlatform = ArgumentCallbacks<Map<String, dynamic>>();
 
@@ -81,6 +86,7 @@ abstract class VietmapGlPlatform {
   Future<void> recenter();
 
   Future<void> updateUserLocationLayerIcon(bool isEnable);
+  Future<void> updateLogoEnabled(bool isEnable);
   Future<LatLngBounds> getVisibleRegion();
 
   Future<void> addImage(String name, Uint8List bytes, [bool sdf = false]);
@@ -133,7 +139,7 @@ abstract class VietmapGlPlatform {
       String sourceId, Map<String, dynamic> geojsonFeature);
 
   Future<void> removeSource(String sourceId);
-
+  Future<void> updateLayerProperties(MarkerLayerPositionData data);
   Future<void> addSymbolLayer(
       String sourceId, String layerId, Map<String, dynamic> properties,
       {String? belowLayerId,
@@ -215,10 +221,11 @@ abstract class VietmapGlPlatform {
     onFeatureDraggedPlatform.clear();
     onCameraMoveStartedPlatform.clear();
     onCameraMovePlatform.clear();
+    onAnnotationUpdate.clear();
     onCameraIdlePlatform.clear();
     onMapStyleLoadedPlatform.clear();
     onMapRenderedPlatform.clear();
-
+    onDidFinishedRenderingFrame.clear();
     onMapClickPlatform.clear();
     onMapLongClickPlatform.clear();
     onCameraTrackingChangedPlatform.clear();

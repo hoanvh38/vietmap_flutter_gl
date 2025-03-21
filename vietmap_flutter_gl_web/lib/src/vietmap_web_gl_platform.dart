@@ -1167,4 +1167,16 @@ class VietmapController extends VietmapGlPlatform
     // TODO: implement updateUserLocationLayerIcon
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> updateLayerProperties(MarkerLayerPositionData data) {
+    // TODO: implement updateLayerProperties
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateLogoEnabled(bool isEnable) {
+    // TODO: implement updateLogoEnabled
+    throw UnimplementedError();
+  }
 }

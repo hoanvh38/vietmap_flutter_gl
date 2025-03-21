@@ -30,3 +30,4 @@ part 'src/helper/vietmap_spherical_util.dart';
 part 'src/helper/vietmap_snap_engine.dart';
 part 'extensions/color_extension.dart';
 part 'src/helper/vietmap_polyline_utils.dart';
+part 'src/models/marker_layer_position_data.dart';

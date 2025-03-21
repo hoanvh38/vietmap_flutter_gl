@@ -53,12 +53,17 @@ class MethodChannelVietmapGl extends VietmapGlPlatform {
         final cameraPosition =
             CameraPosition.fromMap(call.arguments['position'])!;
         onCameraMovePlatform(cameraPosition);
+      case 'camera#onAnnotationUpdate':
+        onAnnotationUpdate.call({'data': call.arguments['data']});
       case 'camera#onIdle':
         final cameraPosition =
             CameraPosition.fromMap(call.arguments['position']);
         onCameraIdlePlatform(cameraPosition);
       case 'map#onStyleLoaded':
         onMapStyleLoadedPlatform(null);
+
+      case 'map#onDidFinishRenderingFrame':
+        onDidFinishedRenderingFrame(null);
       case 'map#onMapRendered':
         onMapRenderedPlatform(null);
       case 'map#onMapClick':
@@ -850,7 +855,18 @@ class MethodChannelVietmapGl extends VietmapGlPlatform {
   }
 
   @override
+  Future<void> updateLogoEnabled(bool isEnable) async {
+    await _channel.invokeMethod(
+        'map#updateLogoEnabled', <String, dynamic>{'isEnable': isEnable});
+  }
+
+  @override
   Future<void> recenter() async {
     await _channel.invokeMethod('map#recenter');
+  }
+
+  @override
+  Future<void> updateLayerProperties(MarkerLayerPositionData data) async {
+    await _channel.invokeMethod('camera#updateLayerProperties', data.toJson());
   }
 }

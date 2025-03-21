@@ -9,6 +9,6 @@ extension ColorExtension on Color? {
 extension ColorExtension2 on String {
   Color toColor() {
     return Color(int.parse(this.replaceFirst('#', ''), radix: 16))
-        .withOpacity(1.0);
+        .withAlpha((1.0 * 255).round());
   }
 }
