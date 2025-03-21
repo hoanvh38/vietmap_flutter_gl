@@ -54,6 +54,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'gradle'
+      - name: Checkout to example
+        run: cd vietmap_flutter_gl/example
       - name: Build example APK
         run: flutter build apk
       - name: Upload apk as artifact
@@ -83,6 +85,8 @@ jobs:
       - uses: maxim-lobanov/setup-cocoapods@v1
         with:
           podfile-path: example/ios/Podfile.lock
+      - name: Checkout to example
+        run: cd vietmap_flutter_gl/example
       - name: Build iOS package
         run: flutter build ios --simulator
       - name: Upload Runner.app as artifact
@@ -109,5 +113,7 @@ jobs:
           flutter-version: ${{ matrix.sdk }}
           cache: true
       - uses: bluefireteam/melos-action@v3
+      - name: Checkout to example
+        run: cd vietmap_flutter_gl/example
       - name: Build web
         run: flutter build web
